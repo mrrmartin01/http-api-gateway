@@ -1,6 +1,12 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { CreateUserDto } from './dtos/CreateUser.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -8,6 +14,9 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtGuard } from 'src/auth/guard';
+import { GetUser } from 'src/auth/decorator';
+import { EditUserDto } from './dtos/EditUser.dto';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -15,16 +24,22 @@ import {
 export class UsersController {
   constructor(@Inject('NATS_SERVICE') private natsClient: ClientProxy) {}
 
-  @Post()
+  @Get('me')
+  getMe(@GetUser() user: any) {
+    return this.natsClient.send({ cmd: 'editUser' }, user);
+  }
+
+  @Patch()
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto, description: 'Data for creating a user' })
+  @ApiBody({ type: EditUserDto, description: 'Data for creating a user' })
   @ApiResponse({
     status: 201,
     description: 'The user has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request. Check your payload' })
-  createUser(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    return this.natsClient.send({ cmd: 'createUser' }, createUserDto);
+  @UseGuards(JwtGuard)
+  editUser(@GetUser('id') userId: string, @Body() editUserDto: EditUserDto) {
+    console.log(editUserDto);
+    return this.natsClient.send({ cmd: 'editUser' }, [userId, editUserDto]);
   }
 }

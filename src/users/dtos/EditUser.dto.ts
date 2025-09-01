@@ -7,18 +7,18 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateUserDto {
+export class EditUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(32)
   @ApiProperty({ example: 'John' })
-  firstname: string;
+  firstname?: string;
 
   @IsNotEmpty()
   @IsString()
   @MaxLength(32)
   @ApiProperty({ example: 'Doe' })
-  lastname: string;
+  lastname?: string;
 
   @IsOptional()
   @IsString()
@@ -29,12 +29,12 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
   @ApiProperty({ example: 'user@mail.com' })
-  email: string;
+  email?: string;
 
   @IsString()
   @IsNotEmpty()
   @ApiProperty({ example: 'strongPassword123' })
-  password: string;
+  password?: string;
 
   @IsString()
   @IsNotEmpty()
