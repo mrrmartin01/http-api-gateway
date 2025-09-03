@@ -15,8 +15,8 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { JwtGuard } from 'src/auth/guard';
-import { GetUser } from 'src/auth/decorator';
 import { EditUserDto } from './dtos/EditUser.dto';
+import { GetUser } from 'src/auth/decorator';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -26,7 +26,7 @@ export class UsersController {
 
   @Get('me')
   getMe(@GetUser() user: any) {
-    return this.natsClient.send({ cmd: 'editUser' }, user);
+    return this.natsClient.send({ cmd: 'getMe' }, user);
   }
 
   @Patch()
