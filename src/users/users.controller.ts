@@ -24,22 +24,23 @@ import { GetUser } from 'src/auth/decorator';
 export class UsersController {
   constructor(@Inject('NATS_SERVICE') private natsClient: ClientProxy) {}
 
+  @UseGuards(JwtGuard)
   @Get('me')
-  getMe(@GetUser() user: any) {
-    return this.natsClient.send({ cmd: 'getMe' }, user);
+  getMe(@GetUser('id') userId: string) {
+    return this.natsClient.send({ cmd: 'getMe' }, userId);
   }
 
   @Patch()
-  @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: EditUserDto, description: 'Data for creating a user' })
+  @ApiOperation({ summary: 'Edit user information' })
+  @ApiBody({ type: EditUserDto, description: 'Data for edtting a user' })
   @ApiResponse({
     status: 201,
-    description: 'The user has been successfully created.',
+    description: 'The user info has been successfully editted.',
   })
   @ApiResponse({ status: 400, description: 'Bad Request. Check your payload' })
   @UseGuards(JwtGuard)
   editUser(@GetUser('id') userId: string, @Body() editUserDto: EditUserDto) {
     console.log(editUserDto);
-    return this.natsClient.send({ cmd: 'editUser' }, [userId, editUserDto]);
+    return this.natsClient.send({ cmd: 'editUser' }, { userId, editUserDto });
   }
 }
