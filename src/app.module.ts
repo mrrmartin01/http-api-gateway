@@ -1,10 +1,15 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
-import { PaymentsModule } from './payments/payments.module';
-import { AuthModule } from './auth/auth.module';
+import { ProductsModule } from './products/products.module';
+import { ClientsModule } from '@nestjs/microservices';
+import { NATS_CLIENT_CONFIG } from './config/nats-client.config';
 
 @Module({
-  imports: [UsersModule, PaymentsModule, AuthModule],
+  imports: [
+    ClientsModule.register([NATS_CLIENT_CONFIG]),
+    UsersModule,
+    ProductsModule,
+  ],
   controllers: [],
   providers: [],
 })

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ProductsController } from './products.controller';
 import { ClientsModule } from '@nestjs/microservices';
 import { NATS_CLIENT_CONFIG } from '../config/nats-client.config';
-import { UsersController } from './users.controller';
 
 @Module({
   imports: [ClientsModule.register([NATS_CLIENT_CONFIG])],
-  controllers: [UsersController],
+  controllers: [ProductsController],
   providers: [],
 })
-export class UsersModule {}
+export class ProductsModule {}

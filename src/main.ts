@@ -17,9 +17,11 @@ async function bootstrap() {
   SwaggerModule.setup('docs', app, document);
 
   app.useGlobalPipes(new ValidationPipe());
+
   const PORT = process.env.PORT || 3000;
+  app.setGlobalPrefix('api');
   await app.listen(PORT, () =>
     console.log(`Server is running on port ${PORT}`)
   );
 }
-bootstrap();
+bootstrap().catch((err) => console.error('Gateway bootup error', err));
