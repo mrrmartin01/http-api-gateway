@@ -12,6 +12,9 @@ export interface JwtPayload {
   typ: string;
   iat: number;
   exp: number;
+  firstName?: string;
+  lastName?: string;
+  address?: string;
 }
 
 @Injectable()
@@ -36,6 +39,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       roles: payload.roles,
       tokenVersion: payload.ver,
       jti: payload.jti,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      address: payload.address,
     };
   }
 }

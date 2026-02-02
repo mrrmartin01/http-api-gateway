@@ -21,6 +21,7 @@ import { LoginUserDto } from './dto/login-user.dto';
 import { JwtAuthGuard } from '../auth/jwt.guard';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { JwtUser } from '../auth/interfaces/jwt-user.interface';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @Controller({
@@ -44,13 +45,16 @@ export class UsersController {
     return this.natsClient.send({ cmd: 'login_user' }, loginUserDto);
   }
 
-  @Patch(':id')
+  @Patch('update/:id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update user' })
   @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  editUser(@Param('id') id: string, @Body() body: Partial<CreateUserDto>) {
-    return this.natsClient.send({ cmd: 'update_user' }, { id, ...body });
+  editUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.natsClient.send(
+      { cmd: 'update_user' },
+      { id, ...updateUserDto }
+    );
   }
 
   @Get('profile')
