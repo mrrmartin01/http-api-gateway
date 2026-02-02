@@ -1,13 +1,16 @@
-FROM oven/bun:latest
+FROM node:22
+
+RUN npm install -g bun
 
 WORKDIR /usr/src/app
 
-COPY package.json bun.lock ./
+COPY package.json bun.lock tsconfig*.json ./
 
-# Install dependencies
-RUN bun install --frozen-lockfile
+RUN bun install
 
-# Copy the rest of the app
 COPY . .
 
-CMD ["bun", "run", "index.js"]
+ENV NODE_ENV=development
+
+CMD ["bun", "start:dev"]
+
