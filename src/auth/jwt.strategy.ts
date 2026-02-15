@@ -6,15 +6,15 @@ import { ConfigService } from '@nestjs/config';
 export interface JwtPayload {
   sub: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  address?: string;
   roles: string[];
   ver: number;
   jti: string;
   typ: string;
   iat: number;
   exp: number;
-  firstName?: string;
-  lastName?: string;
-  address?: string;
 }
 
 @Injectable()
@@ -36,12 +36,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return {
       userId: payload.sub,
       email: payload.email,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      address: payload?.address,
       roles: payload.roles,
       tokenVersion: payload.ver,
       jti: payload.jti,
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      address: payload.address,
     };
   }
 }

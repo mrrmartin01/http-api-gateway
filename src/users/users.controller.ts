@@ -7,7 +7,6 @@ import {
   Param,
   UseGuards,
   Get,
-  Request,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import {
@@ -45,18 +44,6 @@ export class UsersController {
     return this.natsClient.send({ cmd: 'login_user' }, loginUserDto);
   }
 
-  @Patch('update/:id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  @ApiOperation({ summary: 'Update user' })
-  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
-  editUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.natsClient.send(
-      { cmd: 'update_user' },
-      { id, ...updateUserDto }
-    );
-  }
-
   @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
@@ -69,6 +56,33 @@ export class UsersController {
       message: 'Profile retrieved successfully',
       user,
     };
+  }
+
+  @Post('refresh-token')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Refresh access and refresh tokens' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  refreshAccessToken(@CurrentUser() user: JwtUser) {
+    return this.natsClient.send(
+      { cmd: 'refresh_access_token' },
+      {
+        userId: user.id,
+        refreshToken: user.jti,
+      }
+    );
+  }
+
+  @Patch('update/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user' })
+  @ApiUnauthorizedResponse({ description: 'Unauthorized' })
+  editUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.natsClient.send(
+      { cmd: 'update_user' },
+      { id, ...updateUserDto }
+    );
   }
 
   //ADMIN STUFF
